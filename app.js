@@ -8,7 +8,7 @@ const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js")
 const ExpressError = require("./utils/ExpressError.js");
 const { wrap } = require("module");
-const { lisitngSchema, reviewSchema } = require("./schema");
+const { listingSchema, reviewSchema } = require("./schema");
 const Review = require("./models/review.js");
 // const { reviewSchema } = require("./schema.js");
 
@@ -38,11 +38,14 @@ app.get("/", (req, res) => {
 });
 
 const validateListing = (req, res, next) => {
-    let { error } = lisitngSchema.validate(req.body);
+    if (req.body.listing.price) {
+        req.body.listing.price = parseFloat(req.body.listing.price);
+    }
+    let { error } = listingSchema.validate(req.body);
 
     if (error) {
         let errMsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(400, err.errMsg);
+        throw new ExpressError(400, errMsg);
     } else {
         next();
     }
@@ -53,7 +56,7 @@ const validateReview = (req, res, next) => {
 
     if (error) {
         let errMsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(400, err.errMsg);
+        throw new ExpressError(400, errMsg);
     } else {
         next();
     }
@@ -78,8 +81,8 @@ app.get("/listings/:id", wrapAsync(async (req, res) => {
 
 //Create Route
 app.post("/listings", validateListing, wrapAsync(async (req, res, next) => {
-    let result = lisitngSchema.validate(req.body);
-    console.log(result);
+    let result = listingSchema.validate(req.body);
+    // console.log(result);
     if (result.error) {
         throw new ExpressError(400, error);
     }
@@ -109,7 +112,7 @@ app.put("/listings/:id", validateListing, wrapAsync(async (req, res) => {
 app.delete("/listings/:id", wrapAsync(async (req, res) => {
     let { id } = req.params;
     let deletedListing = await Listing.findByIdAndDelete(id);
-    console.log(deletedListing);
+    // console.log(deletedListing);
     res.redirect("/listings");
 })
 );
@@ -126,7 +129,6 @@ app.post("/listings/:id/reviews", validateReview, wrapAsync(async (req, res) => 
     }
 
     let newReview = new Review(req.body.review);
-    console.log("New Review:", newReview); // Debugging
 
     listing.reviews.push(newReview);
 

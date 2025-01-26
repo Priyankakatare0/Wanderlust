@@ -1,34 +1,34 @@
-const localMapToken = process.env.MAP_TOKEN; // Ensure your MAP_TOKEN is set properly
+const localMapToken = "WGMMEZsvQKPO4o7xYIWn ";  
+console.log("map working");// Your MapTiler token
 const map = L.map('map').setView([49.2125578, 16.62662018], 14);
 
-// Add tile layer to the map
-L.tileLayer(`https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=${localMapToken}`, {
-    tileSize: 512,
-    zoomOffset: -1,
-    minZoom: 1,
-    attribution: `
-        <a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a>
-        <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>
-    `,
-    crossOrigin: true
-}).addTo(map);
+        // Add tile layer to the map
+        L.tileLayer(`https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=${localMapToken}`, {
+            tileSize: 512,
+            zoomOffset: -1,
+            minZoom: 1,
+            attribution: `
+                <a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a>
+                <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>
+            `,
+            crossOrigin: true
+        }).addTo(map);
 
 // Function to search and move map
 async function searchLocation() {
-    const city = document.getElementById('location-input').value; // Use .value for inputs
-    const country = document.getElementById('country-input').value;
+    const city = document.getElementById('location-input').innerHTML;  // Get city input
+    const country = document.getElementById('country-input').innerHTML;  // Get country input
 
-    if (!city || !country) {
-        alert('Please enter both city and country');
-        return;
-    }
-
+    // if (!city || !country) {
+    //     alert('Please enter both city and country');
+    //     return;
+    // }
+ 
     // Construct full location query (city, country)
     const location = `${city}, ${country}`;
 
     // Fetch coordinates from MapTiler Geocoding API
     const response = await fetch(`https://api.maptiler.com/geocoding/${location}.json?key=${localMapToken}`);
-
     const data = await response.json();
 
     if (data && data.features && data.features.length > 0) {
@@ -47,5 +47,6 @@ async function searchLocation() {
     }
 }
 
-// Example event listener for a search button
-document.getElementById('search-button').addEventListener('click', searchLocation);
+// Event listener for the form submission or input change
+// document.getElementById('search-button').addEventListener('click', searchLocation);
+searchLocation();

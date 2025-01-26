@@ -62,10 +62,6 @@ if(process.env.NODE_ENV != "production"){
         },
     };
     
-    // app.get("/", (req, res) => {
-    //     res.send("root is working");
-    // });
-    
     app.use(session(sessionOptions));
     app.use(flash());
     
@@ -82,23 +78,10 @@ if(process.env.NODE_ENV != "production"){
         res.locals.currUser = req.user;
         next();
     });
-    
-    // app.get("/demouser", async(req, res) => {
-    //     let fakeUser = new User({
-    //         email: "Priya@gmail.com",
-    //         username: "Priya"
-    //     })
-    //     let registeredUser = await User.register(fakeUser, "HelloWorld");
-    //     res.send(registeredUser);
-    // })
      
     app.use("/listings", listingRouter);
     app.use("/listings/:id/reviews", reviewRouter);
     app.use("/", userRouter);
-    
-    // app.get("/listings/new", (req, res) => {
-    //     res.render("listings/new.ejs")
-    // });
     
     app.all("*", (req, res, next) => {
         next(new ExpressError(404, "Page Not Found!"));
@@ -107,7 +90,6 @@ if(process.env.NODE_ENV != "production"){
     app.use((err, req, res, next) => {
         let { statusCode = 500, message = "Something went wrong!" } = err;
         res.status(statusCode).render("listings/error.ejs", { message });
-        // res.status(statusCode).send(message);
     });
     
     app.listen(8080, () => {
